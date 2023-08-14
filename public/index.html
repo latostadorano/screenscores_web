@@ -1,0 +1,316 @@
+<html lang="en">
+
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+</head>
+
+<body>
+  <script src="sketch.js"></script>
+
+
+  <!-- Aquí está el formulario del partido -->
+  <div class="container d-block d-sm-none">
+    <div class="row">
+      <div class="col-12">
+        <p>
+          <button class="btn btn-light" type="button" data-toggle="collapse" data-target="#collapseExample"
+            aria-expanded="false" aria-controls="collapseExample">
+            Configuración inicial
+          </button>
+        </p>
+        <div class="collapse" id="collapseExample">
+          <h2>Configuración inicial</h2>
+          <br>
+          <form id="datosPartido">
+            <div class="form-group">
+              <label for="nombreLocales">Nombre del Equipo local</label>
+              <input type="text" class="form-control" id="nombreLocales" placeholder="Locales" value="Locales">
+            </div>
+            <div class="form-group">
+              <label for="nombreVisitantes">Nombre del Equipo visitante</label>
+              <input type="text" class="form-control" id="nombreVisitantes" placeholder="Visitantes" value="Visitantes">
+            </div>
+            <div class="form-group">
+              <label for="numeroPeriodos">Ingrese la cantidad de periodos a jugar</label>
+              <select class="form-control" id="numeroPeriodos">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="timer-input">Ingrese la duración de cada periodo en minutos</label>
+              <select class="form-control" id="timer-input">
+                <option>20</option>
+                <option>22</option>
+              </select>
+            </div>
+            <br>
+            <button id="set-configuracion-inicial" type="submit" class="btn btn-primary btn-lg" data-toggle="collapse"
+              data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Aceptar</button>
+          </form>
+          <br>
+        </div>
+
+      </div>
+
+    </div>
+    <div class="row">
+      <div class="col-12">
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Estamos armando el marcador más responsivo -->
+  <div class="container text-center align-middle">
+    <div class="row">
+      <!-- Faltas pantalla -->
+      <div class="col-sm-2 d-none d-sm-block">
+        <h3>Faltas</h3>
+      </div>
+      <!-- Tiempo -->
+      <div class="col-xs-12 col-sm-8 align-middle">
+        <h1 id="timer-text">00:00</h1>
+        <div class="row">
+          <!-- Botones tiempo -->
+          <div class="col-6 d-block d-sm-none">
+            <button id="start-stop-button" type="button" class="btn btn-primary btn-lg">Iniciar</button>
+          </div>
+          <div class="col-6 d-block d-sm-none">
+            <button id="reset-button" type="button" class="btn btn-light btn-lg">Reset</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-2 d-none d-sm-block">
+        <h3>Faltas</h3>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-6" id="divLocalColor">
+        <h1 id="team1Score">SCORE 1</h1>
+        <h5 id="targetNombreLocales">Locales</h5>
+        <div class="row">
+          <div class="col-2 d-block d-sm-none">
+            <button type="button" class="btn btn-secondary btn-lg">-</button>
+          </div>
+          <div class="col-10 d-block d-sm-none">
+            <!-- Collapse -->
+            <button type="button" class="btn btn-success btn-lg" data-toggle="collapse" data-target="#collapseGolLocal"
+              aria-expanded="false" aria-controls="collapseGolLocal">Agregar gol</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-6" id="divVisitanteColor">
+        <h1 id="team2Score">SCORE 2</h1>
+        <h5 id="targetNombreVisitantes">Visitantes</h5>
+        <div class="row">
+          <div class="col-2 d-block d-sm-none">
+            <button type="button" class="btn btn-secondary btn-lg">-</button>
+          </div>
+          <div class="col-10 d-block d-sm-none">
+            <button type="submit" class="btn btn-success btn-lg" data-toggle="collapse"
+              data-target="#collapseGolVisitante" aria-expanded="false" aria-controls="collapseGolVisitante">Agregar
+              gol</button>
+          </div>
+        </div>
+      </div>
+      <!-- Collapses para Goles -->
+      <div class="col-12 collapse" id="collapseGolLocal">
+        <br>
+        <div class="input-group">
+          <input type="text" class="form-control scorer-input" data-team="
+          
+          " placeholder="Ingresar goleador equipo Local" aria-label="Ingresar goleador equipo Local"
+            aria-describedby="basic-addon2">
+          <div class="input-group-append">
+            <button class="btn btn-secondary" data-toggle="collapse" data-target="#collapseGolLocal"
+              aria-expanded="false" aria-controls="collapseGolLocal" type="button">Cancelar</button>
+            <button class="btn btn-success score-btn" type="submit" data-toggle="collapse" data-team="team1"
+              data-target="#collapseGolLocalConfirm" aria-expanded="false"
+              aria-controls="collapseGolLocalConfirm">Agregar</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 collapse" id="collapseGolLocalConfirm">
+            <br>
+            <div class="alert alert-success" role="alert">
+              <strong>¡Gol Local! </strong> Goleador agregado.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 collapse" id="collapseGolVisitante">
+        <br>
+        <div class="input-group">
+          <input type="text" class="form-control scorer-input" data-team="team2"
+            placeholder="Ingresar goleador equipo Visitante" aria-label="Ingresar goleador equipo Visitante"
+            aria-describedby="basic-addon2">
+          <div class="input-group-append">
+            <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseGolVisitante"
+              aria-expanded="false" aria-controls="collapseGolVisitante">Cancelar</button>
+            <button class="btn btn-success score-btn" data-team="team2" type="button" data-toggle="collapse"
+              data-target="#collapseGolVisitanteConfirm" aria-expanded="false"
+              aria-controls="collapseGolVisitanteConfirm">Agregar</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 collapse" id="collapseGolVisitanteConfirm">
+            <br>
+            <div class="alert alert-success" role="alert">
+              <strong>¡Gol Visitante! </strong> Goleador agregado.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <!-- FALTAS -->
+    <div class="row d-sm-none">
+      <div class="col-6 ">
+        <h3>FALTAS</h3>
+        <div class="row">
+          <div class="col-2">
+            <button type="button" class="btn btn-secondary btn-lg">-</button>
+          </div>
+          <div class="col-10 d-block d-sm-none">
+            <button type="button" class="btn btn-success btn-lg" data-toggle="collapse"
+              data-target="#collapseFaltaLocal" aria-expanded="false" aria-controls="collapseFaltaLocal">Agregar
+              falta</button>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="col-6 d-sm-none">
+        <h3>FALTAS</h3>
+        <div class="row">
+          <div class="col-2">
+            <button type="button" class="btn btn-secondary btn-lg">-</button>
+          </div>
+          <div class="col-10 d-block d-sm-none">
+            <button type="button" class="btn btn-success btn-lg" data-toggle="collapse"
+              data-target="#collapseFaltaVisitante" aria-expanded="false" aria-controls="collapseFaltaVisitante">Agregar
+              falta</button>
+          </div>
+        </div>
+      </div>
+      <!-- Collapses para Faltas -->
+      <div class="col-12 collapse" id="collapseFaltaLocal">
+        <br>
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Ingresar infractor Local"
+            aria-label="Ingresar infractor Local" aria-describedby="basic-addon2">
+          <div class="input-group-append">
+            <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseFaltaLocal"
+              aria-expanded="false" aria-controls="collapseFaltaLocal">Cancelar</button>
+            <button class="btn btn-success" type="button" data-toggle="collapse"
+              data-target="#collapseFaltaLocalConfirm" aria-expanded="false"
+              aria-controls="collapseFaltaLocalConfirm">Agregar</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 collapse" id="collapseFaltaLocalConfirm">
+            <br>
+            <div class="alert alert-success" role="alert">
+              <strong>¡Falta Local! </strong> Infractor agregado.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 collapse" id="collapseFaltaVisitante">
+        <br>
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Ingresar infractor Visitante"
+            aria-label="Ingresar infractor Visitante" aria-describedby="basic-addon2">
+          <div class="input-group-append">
+            <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseFaltaVisitante"
+              aria-expanded="false" aria-controls="collapseFaltaVisitante">Cancelar</button>
+            <button class="btn btn-success" type="button" data-toggle="collapse"
+              data-target="#collapseFaltaVisitanteConfirm" aria-expanded="false"
+              aria-controls="collapseFaltaVisitanteConfirm">Agregar</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 collapse" id="collapseFaltaVisitanteConfirm">
+            <br>
+            <div class="alert alert-success" role="alert">
+              <strong>¡Falta Visitante! </strong> Infractor agregado.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <br>
+    <div class="row">
+      <div class="col-12">
+        <h3 id="targetTiempo">1</h3>
+        <h5>Tiempo</h5>
+      </div>
+      <!-- <div class="col-12 d-block d-sm-none">
+        <form class="form-inline">
+          <label class="my-1 mr-2" for="inlineFormCustomSelectPref"></label>
+          <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+            <option selected>Cambiar...</option>
+            <option value="1">Uno</option>
+            <option value="2">Dos</option>
+            <option value="3">Tres</option>
+          </select>
+
+        </form>
+      </div> -->
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-6 d-block d-sm-none">
+        <button type="button" class="btn btn-primary btn-lg">Config</button>
+      </div>
+      <div class="col-6 d-block d-sm-none">
+        <button type="button" class="btn btn-warning btn-lg">Reset</button>
+      </div>
+    </div>
+    <br />
+    <br />
+    <p>/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/</p>
+  </div>
+  </div>
+
+  <!-- Insert this script at the bottom of the HTML, but before you use any Firebase services -->
+  <script type="module">
+    import {
+        initializeApp
+      } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js'
+      import {
+        getDatabase,
+        ref,
+        onValue
+      } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js';
+      // TODO: Replace the following with your app's Firebase project configuration
+      // Initialize Firebase
+      //firebase.initializeApp(firebaseConfig);
+    </script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+  </script>
+
+</body>
+
+</html>

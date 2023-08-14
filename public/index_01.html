@@ -1,0 +1,29 @@
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+</head>
+
+<body>
+  <script src="sketch.js"></script>
+  <!-- Insert this script at the bottom of the HTML, but before you use any Firebase services -->
+  <script type="module">
+    import {
+      initializeApp
+    } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js'
+    import {
+      getDatabase,
+      ref,
+      onValue
+    } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js';
+    // TODO: Replace the following with your app's Firebase project configuration
+    // Initialize Firebase
+    //firebase.initializeApp(firebaseConfig);
+  </script>
+
+</body>
